@@ -1,0 +1,168 @@
+logLevel: debug
+logToStdout: both
+# llama-swap config - turboquant backend
+healthCheckTimeout: 300
+
+models:
+  "lfm2.5-2.6b":
+    name: "LFM2.5-2.6B Q6_K (Liquid, pure-reasoning agent/tool)"
+    aliases:
+      - "lfm"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v q8_0 --jinja --parallel 1
+      -m /home/sopdet/models/LFM2.5-2.6B-GGUF/LFM2.5-2.6B-Q6_K.gguf
+      -c 131072
+
+  "lfm2.5-vl-3b":
+    name: "LFM2.5-VL-3B Q6_K (Liquid vision)"
+    aliases:
+      - "lfm-vl"
+      - "lfmvl"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v q8_0 --jinja --parallel 1
+      -m /home/sopdet/models/LFM2.5-VL-3B-GGUF/LFM2.5-VL-3B-Q6_K.gguf
+      --mmproj /home/sopdet/models/LFM2.5-VL-3B-GGUF/mmproj-LFM2.5-VL-3B-F16.gguf
+      -c 131072
+
+  "qwen38-q5":
+    name: "Qwen3.8-27B Q5-XYZ-v2 (quimmedes, draft-mtp)"
+    aliases:
+      - "q38q5"
+      - "qwen38"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v turbo2 --jinja --parallel 1
+      --metrics
+      -m /home/sopdet/models-q38/Qwen3.8-27B-Q5-XYZ-v2.gguf
+      --mmproj /home/sopdet/models-q38/mmproj-Qwen3.8-27B-bf16.gguf
+      --no-mmproj-offload
+      --spec-type draft-mtp --spec-draft-n-max 4
+      --chat-template-file /home/sopdet/models-q38/quimmedes-chat-template.jinja
+      --chat-template-kwargs '{"reasoning_effort":"low"}'
+      --reasoning-budget 2048
+      --reasoning-budget-message "I am thinking for too long -- let me gather more info about the task."
+      -c 200000
+
+  "qwen38-q5-med":
+    name: "Qwen3.8-27B Q5 (quimmedes, MEDIUM effort)"
+    aliases:
+      - "q38med"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v turbo2 --jinja --parallel 1
+      --metrics
+      -m /home/sopdet/models-q38/Qwen3.8-27B-Q5-XYZ-v2.gguf
+      --mmproj /home/sopdet/models-q38/mmproj-Qwen3.8-27B-bf16.gguf
+      --no-mmproj-offload
+      --spec-type draft-mtp --spec-draft-n-max 4
+      --chat-template-file /home/sopdet/models-q38/quimmedes-chat-template.jinja
+      --chat-template-kwargs '{"reasoning_effort":"medium"}'
+      --reasoning-budget 4096
+      --reasoning-budget-message "I am thinking for too long -- let me gather more info about the task."
+      -c 200000
+
+  "qwen38-q5-hi":
+    name: "Qwen3.8-27B Q5 (quimmedes, HIGH effort)"
+    aliases:
+      - "q38hi"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v turbo2 --jinja --parallel 1
+      --metrics
+      -m /home/sopdet/models-q38/Qwen3.8-27B-Q5-XYZ-v2.gguf
+      --mmproj /home/sopdet/models-q38/mmproj-Qwen3.8-27B-bf16.gguf
+      --no-mmproj-offload
+      --spec-type draft-mtp --spec-draft-n-max 4
+      --chat-template-file /home/sopdet/models-q38/quimmedes-chat-template.jinja
+      --chat-template-kwargs '{"reasoning_effort":"high"}'
+      --reasoning-budget 8192
+      --reasoning-budget-message "I am thinking for too long -- let me gather more info about the task."
+      -c 200000
+
+  "qwen38-q5-max":
+    name: "Qwen3.8-27B Q5 (quimmedes, MAX effort)"
+    aliases:
+      - "q38max"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v turbo2 --jinja --parallel 1
+      --metrics
+      -m /home/sopdet/models-q38/Qwen3.8-27B-Q5-XYZ-v2.gguf
+      --mmproj /home/sopdet/models-q38/mmproj-Qwen3.8-27B-bf16.gguf
+      --no-mmproj-offload
+      --spec-type draft-mtp --spec-draft-n-max 4
+      --chat-template-file /home/sopdet/models-q38/quimmedes-chat-template.jinja
+      --chat-template-kwargs '{"reasoning_effort":"max"}'
+      --reasoning-budget 16384
+      --reasoning-budget-message "I am thinking for too long -- let me gather more info about the task."
+      -c 200000
+
+  "qwen3.6-35b-a3b":
+    name: "Qwen3.6-35B-A3B MoE (fast agentic coding, 128k)"
+    aliases:
+      - "qwen"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v turbo2 --jinja --parallel 1
+      -m /home/sopdet/models/Qwen3.6-35B-A3B-UD-IQ4_NL.gguf
+      -c 131072
+
+  "qwen3-vl-8b":
+    name: "Qwen3-VL-8B-Instruct (local vision QA, GPU)"
+    aliases:
+      - "vl"
+      - "vision"
+      - "qwen3vl"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-turbo
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v q8_0 --jinja --parallel 1
+      -m /home/sopdet/models/Qwen3VL-8B-Instruct-Q4_K_M.gguf
+      --mmproj /home/sopdet/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf
+      -c 32768
+    ttl: 600
+
+  "qwen3.8-flash-next":
+    name: "Qwen3.8-Flash-Next 125B hybrid (cafe, live effort, vision)"
+    aliases:
+      - "flash"
+      - "flash-next"
+      - "q38-flash"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-cafe
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      -fa on -nhmoe 36 --ngram-ssd
+      --cache-type-k q8_0 --cache-type-v q8_0 --parallel 1
+      -m /data/flash-next/Qwen3.8-Flash-Next-AD-3.84bpw-IQ4_XS-M64/Qwen3.8-Flash-Next-AD-3.84bpw-IQ4_XS-M64-00001-of-00028.gguf
+      --mmproj /data/flash-next/mmproj-Qwen3.8-Flash-Next-F16.gguf
+      --image-min-tokens 1024
+      -c 200000
+    ttl: 600
+
+  "qwen3.8-27b-cafe":
+    name: "Qwen3.8-27B Q5-XYZ (cafe, live effort, vision)"
+    aliases:
+      - "q38cafe"
+      - "qwen38-cafe"
+    cmd: >
+      /home/sopdet/.local/bin/llama-server-cafe
+      -ngl 99 --device ROCm0 --host 127.0.0.1 --port ${PORT}
+      --cache-type-k q8_0 --cache-type-v q8_0 --jinja --parallel 1
+      --no-mmproj-offload
+      -m /home/sopdet/models-q38/Qwen3.8-27B-Q5-XYZ-v2.gguf
+      --mmproj /home/sopdet/models-q38/mmproj-Qwen3.8-27B-bf16.gguf
+      --chat-template-file /home/sopdet/models-q38/quimmedes-chat-template.jinja
+      --chat-template-kwargs '{"reasoning_effort":"medium"}'
+      --reasoning-budget 4096
+      --reasoning-budget-message "I am thinking for too long -- let me gather more info about the task."
+      -c 200000
+    ttl: 600
