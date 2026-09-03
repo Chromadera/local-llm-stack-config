@@ -61,6 +61,22 @@ Measured: ~35 tok/s raw, ~70 tok/s accepted (MTP), 16.7 GiB VRAM at 200K ctx.
 | LFM2.5-VL-3B Q6_K | turboquant | 128K | none | local vision |
 | Qwen3-VL-8B Q4_K_M | turboquant | 32K | none | vision QA |
 
+## Decode speed vs context depth (Qwen3.8-27B, turboquant + MTP n4)
+
+Measured on the RX 7900 XTX via server `/metrics` counter deltas (method:
+`references/long-context-decode-measurement.md`). **Context depth matters — decode
+collapses ~4x from short context to 100K+.**
+
+| Context depth | decode tok/s | prefill tok/s | notes |
+|---|---|---|---|
+| ~30 (short) | **75.5** | 224 | llama-bench style |
+| ~few hundred (agent-style) | **~85** | ~190 | typical dsh/agent turn |
+| 106K | **18.45** | 420 | pathological single-corpus dump; model FITS at 106K/24GB — it's speed, not capacity, that degrades |
+
+The 18.45 t/s figure is the worst case (a single ~106K-token codebase in one prompt then
+generating). Real agent turns at a few hundred tokens decode ~85 t/s. Quote the number for
+the depth you actually run.
+
 ## Updates
 
 This repo is updated whenever the local config changes, after a go-ahead. The
